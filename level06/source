@@ -1,0 +1,47 @@
+int	auth(char *login, unsigned int serial):
+{
+	  size_t  len;
+	  int     ret;
+
+	  len = strcspn(login, "\n");
+	  login[len] = '\0';
+	  len = strnlen(login, 0x20);
+	  if (len <= 5)
+		    return 1;
+	  if (ptrace(PTRACE_TRACEME, 0, 1, 0) == -1):
+	  {
+		    puts("\x1b[32m.---------------------------.");
+		    puts("\x1b[31m| !! TAMPERING DETECTED !!  |");
+		    puts("\x1b[32m\'---------------------------\'");
+		    return 1;
+	  }
+	  ret = (serial == hash(login));
+	  return ret;
+}
+
+int	main(void):
+{
+  	char          login[32];
+  	unsigned int  serial;
+	int           success;
+
+ 	puts("***********************************");
+	puts("*\t\tlevel06\t\t  *");
+	puts("***********************************");
+	printf("-> Enter Login: ");
+	fgets(login, 0x20, stdin);
+
+  	puts("***********************************");
+	puts("***** NEW ACCOUNT DETECTED ********");
+	puts("***********************************");
+	printf("-> Enter Serial: ");
+ 	scanf("%u", serial);
+
+ 	success = auth(login, serial);
+	if (success == 0):
+	{
+  		puts("Authenticated!");
+   		system("/bin/sh");
+ 	}
+  	return success;
+}

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+
+void	log_wrapper(FILE *f, char *string, char *filename):
+{
+	# function print to /backups/.log
+}
+
+int	main(int argc, char **argv):
+{
+	FILE		*log_file;
+	FILE		*file_to_save;
+	char		*file = "./backups/";
+	int		fd;
+	char		c;
+
+	if (argc != 2):
+		printf("Usage: %s filename\n",*argv);
+
+	log_file = fopen("./backups/.log","w");
+	log_wrapper(log_file, "Starting back up: ", argv[1]);
+
+	file_to_save = fopen(argv[1],"r");
+	if (file_to_save == NULL)
+	{
+		printf("ERROR: Failed to open %s\n", argv[1]);
+		exit(1);
+	}
+
+	strncat(file, av[1], strlen(argv[1]));
+	fd = open(file);
+	if (fd < 0):
+	 {
+		printf("ERROR: Failed to open %s%s\n", "./backups/", argv[1]);
+		exit(1);
+	}
+	while(c = fgetc(file_to_save)):
+		write(fd, &c, 1);
+
+	log_wrapper(log_file, "Finished back up ", argv[1]);
+
+	fclose(file_to_save);
+	close(fd);
+	return 0;
+}
